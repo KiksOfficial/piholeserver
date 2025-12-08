@@ -1,10 +1,29 @@
 <!doctype html>
 <html>
 <head>
-    <title>Home</title>
+    <title>Raspberry Pi Armatuurlaud</title>
+    <meta http-equiv="refresh" content="10"> 
 </head>
 <body>
-    <h1>Home</h1>
-</body>
-</html>
+    <h1>Süsteemi Jõudluse Olek</h1>
+    
+    <hr>
+    
+    <h2>CPU Temperatuur</h2>
+    <p style="font-size: 20px;">
+        Hetke temperatuur: 
+        <strong>{{ cpu_temp }} °C</strong>
+    </p>
 
+    <hr>
+
+    <h2>RAM Kasutus</h2>
+    <p>
+        Kasutatud mälu: <strong>{{ ram_used }} GB</strong> / {{ ram_total }} GB 
+    </p>
+    <p>
+        Kasutusprotsent: <strong>{{ ram_percent }} %</strong>
+    </p>
+
+    </body>
+</html>

@@ -1,5 +1,5 @@
 import os
-
+from sys_performance import get_cpu_temp, get_ram_info
 from flask import Flask, render_template
 
 
@@ -26,8 +26,15 @@ def create_app(test_config=None):
 
     @app.route('/')
     def home():
-        return render_template("home.html")
 
+        cpu_temp = get_cpu_temp()
+        ram_data = get_ram_info()
+
+        return render_template("home.html",
+                               cpu_temp=cpu_temp,
+                               ram_used=ram_data['used_gb'],
+                               ram_total=ram_data['total_gb'],
+                               ram_percent=ram_data['percent'])
     # a simple page that says hello
     @app.route('/hello')
     def hello():
