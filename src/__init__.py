@@ -36,9 +36,13 @@ def create_app(test_config=None):
                                ram_total=ram_data['total_gb'],
                                ram_percent=ram_data['percent'])
     # a simple page that says hello
-    @app.route('/hello')
-    def hello():
-        return 'Hello, World!'
+    @app.route('/login-signup', methods=['Get', 'POST'])
+    def login_signup():
+        return render_template("login-signup.html)
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.get(user_id)
 
     return app
 
