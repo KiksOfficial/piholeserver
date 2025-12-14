@@ -12,18 +12,33 @@
     <h2>CPU Temperatuur</h2>
     <p style="font-size: 20px;">
         Hetke temperatuur: 
-        <strong>{{ cpu_temp }} °C</strong>
+        <strong id="cpu_temp">{{ cpu_temp }} °C</strong>
     </p>
 
     <hr>
 
     <h2>RAM Kasutus</h2>
     <p>
-        Kasutatud mälu: <strong>{{ ram_used }} GB</strong> / {{ ram_total }} GB 
+        Kasutatud mälu: <strong id="ram_used">{{ ram_used }} GB</strong> / {{ ram_total }} GB 
     </p>
     <p>
-        Kasutusprotsent: <strong>{{ ram_percent }} %</strong>
+        Kasutusprotsent: <strong id="ram_percent">{{ ram_percent }} %</strong>
     </p>
 
     </body>
+
+    <script>
+    async function updateStats() {
+        const r = await fetch("/api/stats");
+        const d = await r.json();
+
+        document.getElementById("cpu_temp").innerText = d.cpu_temp;
+        document.getElementById("ram_percent").innerText = d.ram_percent;
+    }
+
+    setInterval(updateStats, 5000);
+    updateStats();
+    </script>
+  
+
 </html>

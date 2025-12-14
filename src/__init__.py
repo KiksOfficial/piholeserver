@@ -1,6 +1,6 @@
 import os
-from sys_performance import get_cpu_temp, get_ram_info
-from flask import Flask, render_template
+from  python.sys_performance import get_cpu_temp, get_ram_info
+from flask import Flask, render_template, jsonify
 
 
 def create_app(test_config=None):
@@ -38,11 +38,23 @@ def create_app(test_config=None):
     # a simple page that says hello
     @app.route('/login-signup', methods=['Get', 'POST'])
     def login_signup():
-        return render_template("login-signup.html)
+        return render_template("login-signup.html")
 
-    @login_manager.user_loader
+    """@login_manager.user_loader
     def load_user(user_id):
-        return User.get(user_id)
+        return User.get(user_id)"""
+
+    @app.route('/api/stats')
+    def api_stats():
+        cpu_temp = get_cpu_temp()
+        ram_data = get_ram_info()
+
+        return jsonify({
+            "cpu_temp": cpu_temp,
+            "ram_used": ram_data['used_gb'],
+            "ram_total": ram_data['total_gb'],
+            "ram_percent": ram_data['percent']
+        })
 
     return app
 
