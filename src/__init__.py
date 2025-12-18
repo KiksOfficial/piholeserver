@@ -1,7 +1,7 @@
 import os
 from  python.sys_performance import get_cpu_temp, get_ram_info, get_cpu_usage
 from flask import Flask, render_template, jsonify, request, flash, redirect, url_for, abort
-from flask_login import LoginManager, UserMixin, login_user
+from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 from python.forms import LoginForm
 from urllib.parse import urlparse, urljoin
 
@@ -34,8 +34,15 @@ def create_app(test_config=None):
         host_url = urlparse(request.host_url)
         redirect_url = urlparse(urljoin(request.host_url, target))
         return redirect_url.scheme in ('http', 'https') and host_url.netloc == redirect_url.netloc
+    
+    @app.route('/logout')
+    def logout():
+        logout_user()
+        flash('Logged out')
+        return redirect(url_for('login'))
 
     @app.route('/')
+    @login_required
     def home():
 
         cpu_temp = get_cpu_temp()
@@ -54,6 +61,7 @@ def create_app(test_config=None):
             def __init__(self, username):
                 self.username = username
                 self.id = self.users[username]['id']
+                self.password = self.users[username]['password']
 
             @classmethod
             def get(cls, username):
@@ -80,24 +88,24 @@ def create_app(test_config=None):
             user = User.get(form.username.data)
             # Login and validate the user.
             # user should be an instance of your `User` class
-            login_user(user)
+            
+            if user and user.password == form.password.data:
+                flash('logged in successfully')
+                login_user(user)
 
-            flash('Logged in successfully.')
+                next_page = request.args.get('next')
+                if next_page and not is_safe_url(next_page):
+                    return abort(400)
+                return redirect(next_page or url_for('home'))
+            else:
+                flash('Invalid credentials')
 
-            next = request.args.get('next')
-            # url_has_allowed_host_and_scheme should check if the url is safe
-            # for redirects, meaning it matches the request host.
-            # See Django's url_has_allowed_host_and_scheme for an example.
-            if next and not is_safe_url(nect):
-                return abort(400)
-            return redirect(next or url_for('home'))
-
-            return flask.redirect(next or flask.url_for('index'))
+           
         return render_template('login.html', form=form)
 
     @login_manager.user_loader
     def load_user(user_id):
-        return User.get(user_id)
+        return User.get_by_id(user_id)
 
     @app.route('/api/stats')
     def api_stats():
