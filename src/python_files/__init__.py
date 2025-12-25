@@ -1,14 +1,14 @@
 import os
 from python_files.sys_performance import get_cpu_temp, get_ram_info, get_cpu_usage
-from flask import Flask, render_template, jsonify, request, flash, redirect, url_for, abort, send_file
+from flask import Flask, render_template, jsonify, request, flash, redirect, url_for, abort
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user
 from python_files.forms import LoginForm
 from python_files.upload_download_files import Upload
 from urllib.parse import urlparse, urljoin
 from extensions import db
-from io import BytesIO
 
 login_manager = LoginManager()
+
 
 def create_app(test_config=None):
     # create and configure the app
@@ -21,8 +21,10 @@ def create_app(test_config=None):
         SQLALCHEMY_DATABASE_URI=f'sqlite:///{db_path}',
         SQLALCHEMY_TRACK_MODIFICATIONS=False,
     )
-    db.init_app(app)
+
     login_manager.init_app(app)
+    db.init_app(app)
+
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
