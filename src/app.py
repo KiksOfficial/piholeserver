@@ -23,6 +23,8 @@ def create_app(test_config=None):
     )
     db.init_app(app)
     login_manager.init_app(app)
+    login_manager.login_view = 'login'
+    login_manager.login_message = 'Please login to access this page'
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -145,5 +147,5 @@ def create_app(test_config=None):
 
 if __name__ == "__main__":
     app = create_app()
-    app.run(debug=True, host='0.0.0.0'', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=5000)
 
